@@ -1,0 +1,74 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Data and models
+data/frames/
+data/masks/
+data/masks_refined/
+data/policy_maps/
+data/depth_maps/
+data/generated_frames/
+data/input_videos/bdd100k/
+models/controlnet/
+models/midas/
+models/sam/
+models/yolo/*.pt
+!yolov8n-seg.pt
+
+# Results and logs
+results/
+logs/
+*.log
+MobilityDreamer/results/
+
+# Datasets
+bdd100k_videos_train_00/
+
+# Large files
+*.mp4
+*.avi
+*.mov
+*.pt
+!yolov8n-seg.pt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.swp

@@ -1,0 +1,284 @@
+# ============================================================================
+# MobilityDreamer Default Configuration
+# ============================================================================
+# This file defines default settings for the production pipeline.
+# Copy this to config/my_project.yaml and customize for your needs.
+
+# ============================================================================
+# PROJECT METADATA
+# ============================================================================
+project:
+  name: "MobilityDreamer_BDD100K"
+  description: "Urban mobility futures visualization using ControlNet"
+  version: "1.0.0"
+  author: "Your Name"
+  output_dir: "results/"
+
+# ============================================================================
+# DATASET CONFIGURATION
+# ============================================================================
+dataset:
+  # Source dataset type: "bdd100k" or "kitti" or "custom"
+  type: "bdd100k"
+  
+  # Path to raw video files (BDD100K .mov files)
+  # Update this to your actual BDD100K path
+  video_dir: "C:/Users/Udai Ratinam G/Downloads/Minor Project/bdd100k_videos_train_00/bdd100k/videos/train/"
+  
+  # Number of videos to process (set to 2 for quick tests)
+  num_videos: 2
+  
+  # Number of frames to extract per video (evenly spaced)
+  frames_per_video: 10
+  
+  # Maximum width for extracted frames (maintains aspect ratio)
+  max_frame_width: 1280
+  
+  # Output directory for extracted frames
+  frames_output_dir: "data/frames/"
+
+# ============================================================================
+# SEGMENTATION CONFIGURATION (YOLOv8)
+# ============================================================================
+segmentation:
+  # Model type: "yolov8n-seg.pt" (nano), "yolov8s-seg.pt" (small), etc.
+  model_path: "yolov8n-seg.pt"
+  
+  # Target classes to segment (COCO classes)
+  # 0=person, 2=car, 3=motorcycle, 5=bus, 7=truck, 9=traffic light, 11=stop sign
+  target_classes: [0, 2, 3, 5, 7, 9, 11, 13]
+  
+  # Confidence threshold (0.0-1.0)
+  confidence_threshold: 0.5
+  
+  # Output directory for masks
+  masks_output_dir: "data/masks/"
+  
+  # Save visualization overlays
+  save_visualizations: true
+
+# ============================================================================
+# POLICY INTERVENTION CONFIGURATION
+# ============================================================================
+policy:
+  # Policy map generation mode: "manual" (Gradio GUI) or "auto" (synthetic)
+  mode: "auto"
+  
+  # For manual mode: launch Gradio GUI on this port
+  gui_port: 7860
+  
+  # For auto mode: synthetic policy generation settings
+  auto:
+    # Bike lane probability (0.0-1.0)
+    bike_lane_probability: 0.6
+    
+    # Pedestrian zone probability
+    pedestrian_zone_probability: 0.4
+    
+    # EV charging station probability
+    ev_station_probability: 0.3
+    
+    # Green space probability
+    green_space_probability: 0.4
+  
+  # Output directory for policy maps
+  policy_output_dir: "data/policy_maps/"
+  
+  # Policy intervention colors (RGB format)
+  colors:
+    bike_lane: [0, 255, 0]        # Green
+    pedestrian_zone: [0, 100, 255]  # Blue
+    ev_station: [255, 150, 0]      # Orange
+    green_space: [255, 100, 200]   # Pink
+
+# ============================================================================
+# DEPTH ESTIMATION CONFIGURATION (MiDaS)
+# ============================================================================
+depth:
+  # Enable depth estimation (required for ControlNet depth conditioning)
+  enabled: true
+  
+  # MiDaS model type: "DPT_Large" (best), "DPT_Hybrid" (balanced), "DPT_Small" (fast)
+  model_type: "DPT_Hybrid"
+  
+  # Output directory for depth maps
+  depth_output_dir: "data/depth_maps/"
+  
+  # Normalize depth to 0-255 range
+  normalize: true
+
+# ============================================================================
+# FUTURE GENERATION CONFIGURATION (ControlNet + Stable Diffusion)
+# ============================================================================
+generation:
+  # Generation mode: "controlnet" (AI-based), "simple" (blending demo)
+  mode: "controlnet"
+  
+  # ControlNet settings
+  controlnet:
+    # Base model: "runwayml/stable-diffusion-v1-5"
+    base_model: "runwayml/stable-diffusion-v1-5"
+    
+    # ControlNet model: "lllyasviel/sd-controlnet-canny"
+    controlnet_model: "lllyasviel/sd-controlnet-canny"
+    
+    # Number of inference steps (20-50 recommended)
+    num_inference_steps: 20
+    
+    # Guidance scale (higher = more prompt adherence)
+    guidance_scale: 7.5
+    
+    # Random seed (for reproducibility, set to null for random)
+    seed: 42
+    
+    # Canny edge detection thresholds
+    canny_low_threshold: 100
+    canny_high_threshold: 200
+    
+    # ControlNet conditioning scale (0.0-1.0)
+    controlnet_conditioning_scale: 1.0
+  
+  # Text prompts for generation
+  prompts:
+    # Base prompt (shared across all frames)
+    base: "urban street scene, modern city, clear weather, high quality, photorealistic"
+    
+    # Intervention-specific prompts
+    bike_lane: "with dedicated bike lanes, cyclists, green infrastructure"
+    pedestrian_zone: "pedestrian-friendly walkway, people walking, accessible design"
+    ev_station: "electric vehicle charging station, sustainable mobility"
+    green_space: "urban park, trees, green areas, natural environment"
+  
+  # Blending settings
+  blending:
+    # Blend strength in policy regions (0.0-1.0)
+    policy_blend_strength: 0.7
+    
+    # Blend strength in non-policy regions
+    original_blend_strength: 0.3
+    
+    # Smoothing kernel size for blend mask
+    smoothing_kernel_size: 15
+  
+  # Output directory
+  output_dir: "data/generated_frames/"
+  
+  # Memory optimization (enable for GPUs with <8GB VRAM)
+  memory_optimization:
+    enable_attention_slicing: true
+    enable_vae_slicing: true
+    enable_sequential_cpu_offload: false  # Set true for low VRAM
+
+# ============================================================================
+# VIDEO COMPOSITION CONFIGURATION
+# ============================================================================
+composition:
+  # Output video format: "mp4", "avi"
+  format: "mp4"
+  
+  # Video codec: "mp4v", "x264", "avc1"
+  codec: "mp4v"
+  
+  # Frames per second
+  fps: 10
+  
+  # Create before/after comparison
+  create_comparison: true
+  
+  # Output directory
+  output_dir: "results/"
+  
+  # Video naming
+  output_filename: "mobility_future_{timestamp}.mp4"
+
+# ============================================================================
+# PIPELINE EXECUTION SETTINGS
+# ============================================================================
+pipeline:
+  # Steps to execute (set false to skip)
+  steps:
+    extract_frames: true
+    segment: true
+    create_policy: true
+    estimate_depth: true
+    generate_future: true
+    compose_video: true
+  
+  # Continue on non-critical errors
+  continue_on_error: false
+  
+  # Logging settings
+  logging:
+    # Log level: "DEBUG", "INFO", "WARNING", "ERROR"
+    level: "INFO"
+    
+    # Log directory
+    log_dir: "logs/"
+    
+    # Save logs to file
+    save_to_file: true
+  
+  # Checkpointing (save intermediate results)
+  checkpointing:
+    enabled: true
+    checkpoint_dir: "checkpoints/"
+
+# ============================================================================
+# HARDWARE SETTINGS
+# ============================================================================
+hardware:
+  # Device: "cuda" (GPU), "cpu"
+  # Set to "auto" to detect automatically
+  device: "auto"
+  
+  # Number of CPU threads for data loading
+  num_workers: 4
+  
+  # Batch size for processing (if applicable)
+  batch_size: 1
+
+# ============================================================================
+# ADVANCED SETTINGS (EXPERIMENTAL)
+# ============================================================================
+advanced:
+  # Use temporal consistency (experimental)
+  temporal_consistency: false
+  
+  # Save intermediate visualizations
+  save_intermediate_visualizations: true
+  
+  # Export metadata JSON
+  export_metadata: true
+  
+  # Metrics to compute
+  metrics:
+    compute_infrastructure_area: true
+    compute_visibility_score: true
+    compute_density_metrics: true
+
+# ============================================================================
+# USAGE EXAMPLES
+# ============================================================================
+
+# To use this config:
+# 1. Copy to config/my_project.yaml
+# 2. Customize settings
+# 3. Run: python mobilitydreamer_pipeline.py --config config/my_project.yaml
+
+# Common configurations:
+#
+# QUICK DEMO (Fast, simplified):
+# - generation.mode: "simple"
+# - depth.enabled: false
+# - dataset.frames_per_video: 5
+#
+# PRODUCTION (High quality):
+# - generation.mode: "controlnet"
+# - depth.enabled: true
+# - depth.model_type: "DPT_Large"
+# - generation.controlnet.num_inference_steps: 50
+#
+# LOW VRAM GPU (<8GB):
+# - generation.memory_optimization.enable_sequential_cpu_offload: true
+# - depth.model_type: "DPT_Small"
+# - generation.controlnet.num_inference_steps: 20
