@@ -1,0 +1,101 @@
+# MobilityDreamer Dependencies
+# Install with: pip install -r requirements.txt
+
+# =============================================================================
+# CORE DEPENDENCIES (REQUIRED)
+# =============================================================================
+
+# Computer Vision
+opencv-python>=4.8.0
+numpy>=1.24.0
+Pillow>=10.0.0
+
+# YOLO Segmentation (CPU-friendly by default)
+ultralytics>=8.0.0
+
+# PyTorch (CPU version - smaller download)
+# For GPU support, see: https://pytorch.org/get-started/locally/
+torch>=2.0.0
+torchvision>=0.15.0
+
+# =============================================================================
+# OPTIONAL DEPENDENCIES (RECOMMENDED)
+# =============================================================================
+
+# Segment Anything Model (SAM) - Better mask refinement
+# Uncomment to install:
+# segment-anything @ git+https://github.com/facebookresearch/segment-anything.git
+
+# MiDaS Depth Estimation - 3D scene understanding
+# Uncomment to install:
+# timm>=0.9.0
+
+# =============================================================================
+# GENERATIVE AI DEPENDENCIES (CRITICAL FOR STAGE 3 - NOT YET IMPLEMENTED)
+# =============================================================================
+
+# ControlNet + Stable Diffusion for future scenario generation
+# Uncomment when implementing generate_future.py:
+# diffusers>=0.21.0
+# transformers>=4.30.0
+# accelerate>=0.20.0
+# xformers>=0.0.20  # Optional: faster attention for GPUs
+
+# =============================================================================
+# GUI DEPENDENCIES (FOR POLICY EDITOR - NOT YET IMPLEMENTED)
+# =============================================================================
+
+# Option 1: Tkinter (built-in with Python, no install needed)
+# Option 2: PyQt5 (more advanced)
+# PyQt5>=5.15.0
+# Option 3: Web-based (Streamlit/Gradio)
+# streamlit>=1.28.0
+# gradio>=3.50.0
+
+# =============================================================================
+# UTILITIES
+# =============================================================================
+
+# Progress bars and logging
+tqdm>=4.65.0
+
+# Data handling
+pandas>=2.0.0
+
+# =============================================================================
+# DEVELOPMENT DEPENDENCIES (OPTIONAL)
+# =============================================================================
+
+# Testing
+# pytest>=7.4.0
+# pytest-cov>=4.1.0
+
+# Code formatting
+# black>=23.0.0
+# flake8>=6.0.0
+
+# Type checking
+# mypy>=1.5.0
+
+# =============================================================================
+# INSTALLATION NOTES
+# =============================================================================
+
+# 1. Minimal install (current working features):
+#    pip install opencv-python numpy Pillow ultralytics torch torchvision
+#
+# 2. Full install (all current + optional):
+#    pip install -r requirements.txt
+#
+# 3. GPU-accelerated PyTorch (NVIDIA CUDA):
+#    pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+#
+# 4. For SAM refinement:
+#    Uncomment segment-anything line above, then:
+#    pip install -r requirements.txt
+#    Download checkpoint: https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth
+#    Place in: models/sam/
+#
+# 5. For ControlNet generation (TO BE IMPLEMENTED):
+#    Uncomment diffusers, transformers, accelerate lines
+#    pip install -r requirements.txt
