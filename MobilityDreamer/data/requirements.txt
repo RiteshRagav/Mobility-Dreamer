@@ -1,0 +1,29 @@
+# MobilityDreamer Dependencies
+
+# Computer Vision & Image Processing
+opencv-python>=4.8.0
+numpy>=1.24.0
+Pillow>=10.0.0
+tqdm>=4.65.0
+
+# YOLO Segmentation
+ultralytics>=8.0.0
+
+# PyTorch
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Stable Diffusion + ControlNet
+diffusers>=0.21.0
+transformers>=4.30.0
+accelerate>=0.20.0
+
+# MiDaS Depth Estimation
+timm>=0.9.0
+
+# Interactive Policy GUI
+gradio>=3.50.0
+
+# Configuration
+pyyaml>=6.0
+pandas>=2.0.0

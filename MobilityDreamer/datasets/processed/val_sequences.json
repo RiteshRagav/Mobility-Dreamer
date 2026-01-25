@@ -1,0 +1,82 @@
+[
+  {
+    "sequence_id": "default_video_seq_0000",
+    "video_id": "default_video",
+    "frame_indices": [
+      0,
+      2,
+      4,
+      6
+    ]
+  },
+  {
+    "sequence_id": "default_video_seq_0001",
+    "video_id": "default_video",
+    "frame_indices": [
+      2,
+      4,
+      6,
+      8
+    ]
+  },
+  {
+    "sequence_id": "default_video_seq_0002",
+    "video_id": "default_video",
+    "frame_indices": [
+      4,
+      6,
+      8,
+      10
+    ]
+  },
+  {
+    "sequence_id": "default_video_seq_0003",
+    "video_id": "default_video",
+    "frame_indices": [
+      6,
+      8,
+      10,
+      12
+    ]
+  },
+  {
+    "sequence_id": "default_video_seq_0004",
+    "video_id": "default_video",
+    "frame_indices": [
+      8,
+      10,
+      12,
+      14
+    ]
+  },
+  {
+    "sequence_id": "default_video_seq_0005",
+    "video_id": "default_video",
+    "frame_indices": [
+      10,
+      12,
+      14,
+      16
+    ]
+  },
+  {
+    "sequence_id": "default_video_seq_0006",
+    "video_id": "default_video",
+    "frame_indices": [
+      12,
+      14,
+      16,
+      18
+    ]
+  },
+  {
+    "sequence_id": "default_video_seq_0007",
+    "video_id": "default_video",
+    "frame_indices": [
+      14,
+      16,
+      18,
+      20
+    ]
+  }
+]

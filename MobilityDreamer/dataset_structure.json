@@ -1,0 +1,126 @@
+{
+  "_comment": "MobilityDreamer - BDD100K Full Dataset Processing Pipeline",
+  "version": "2.0",
+  "dataset_info": {
+    "name": "BDD100K MobilityDreamer Training Dataset",
+    "raw_videos": 1000,
+    "videos_to_process": 25,
+    "raw_videos_path": "bdd100k_videos_train_00/",
+    "total_raw_size_gb": 18,
+    "frames_per_video": 40,
+    "frame_stride": 10,
+    "estimated_total_frames": 1000,
+    "frame_resolution": [1280, 720],
+    "train_val_split": "85% train, 15% validation",
+    "note": "OPTIMIZED FOR 2-DAY DEADLINE: Processing 25 out of 1000 videos. Each video: 40 frames at stride 10. Total: ~1000 training frames. Preprocessing: 1.5h, Training: 4-6h."
+  },
+
+  "preprocessing_pipeline": {
+    "description": "Convert 700+ .mov videos to frames, masks, and policy maps for training",
+    "steps": [
+      {
+        "step": 1,
+        "name": "Frame Extraction",
+        "description": "Extract 40 frames from each of 25 videos (stride=10 to sample diverse frames)",
+        "input": "bdd100k_videos_train_00/*.mov",
+        "output": "datasets/processed/train/*/frames/",
+        "output_files": "~1,000 JPEG frames (25 videos × 40 frames)",
+        "estimated_time_hours": 0.5,
+        "script": "python scripts/preprocess_bdd100k.py --config config/mobility_config.py --max-videos 25 --frames-per-video 40 --stride 10"
+      },
+      {
+        "step": 2,
+        "name": "Semantic Segmentation",
+        "description": "Run YOLOv8 segmentation on all extracted frames",
+        "input": "datasets/processed/train/*/frames/*.jpg",
+        "output": "datasets/processed/train/*/segmentation/",
+        "output_files": "~1,000 PNG masks (semantic labels)",
+        "estimated_time_hours": 0.75,
+        "model": "yolov8n-seg.pt",
+        "script": "python scripts/preprocess_bdd100k.py --config config/mobility_config.py --enable-seg"
+      },
+      {
+        "step": 3,
+        "name": "Policy Map Generation",
+        "description": "Generate synthetic policy maps (driveable area guidance)",
+        "input": "datasets/processed/train/*/frames/*.jpg",
+        "output": "datasets/processed/train/*/policy/",
+        "output_files": "~1,000 PNG policy maps",
+        "estimated_time_hours": 0.25,
+        "method": "Synthetic rectangles (configurable)",
+        "script": "python scripts/preprocess_bdd100k.py --config config/mobility_config.py --enable-policy"
+      },
+      {
+        "step": 4,
+        "name": "Sequence Indexing",
+        "description": "Create train/val split indices (85/15) and sequence mappings",
+        "input": "datasets/processed/train/*/frames/",
+        "output": "datasets/processed/",
+        "output_files": ["train_sequences.json", "val_sequences.json"],
+        "estimated_time_hours": 0.01,
+        "script": "Automatic during preprocessing (built into preprocess_bdd100k.py)"
+      }
+    ],
+    "total_preprocessing_time_hours": 1.5,
+    "total_disk_space_gb": 4,
+    "preprocessing_command": "python scripts/preprocess_bdd100k.py --config config/mobility_config.py --max-videos 25 --frames-per-video 40 --stride 10 --val-ratio 0.15 --enable-seg --enable-policy",
+    "note_2day_deadline": "OPTIMIZED CONFIG: 25 videos allows completion within 2-day deadline. Preprocessing: 1.5h, Training: 4-6h, Total: 5.5-7.5h. Leaves 40+ hours for IEEE paper writing."
+  },
+
+  "directory_structure": {
+    "raw_data": "bdd100k_videos_train_00/",
+    "preprocessed": {
+      "frames": "data/frames/",
+      "masks": "data/masks/",
+      "policy_maps": "data/policy_maps/",
+      "indices": "datasets/processed/"
+    },
+    "training": {
+      "checkpoints": "output/checkpoints/",
+      "logs": "logs/",
+      "state_file": "training_state.json",
+      "metrics_file": "training_metrics.json"
+    }
+  },
+
+  "expected_output_structure": {
+    "frames": "data/frames/frame_000000.jpg to frame_069999.jpg (~70,000 files)",
+    "masks": "data/masks/frame_000000_mask.png to frame_069999_mask.png (~70,000 files)",
+    "policy_maps": "data/policy_maps/frame_000000_policy.png to frame_069999_policy.png (~70,000 files)",
+    "train_sequences": "datasets/processed/train_sequences.json (59,500 frames, 85%)",
+    "val_sequences": "datasets/processed/val_sequences.json (10,500 frames, 15%)",
+    "total_size": "~150 GB after preprocessing"
+  },
+
+  "training_configuration": {
+    "epochs": 100,
+    "batch_size": 4,
+    "total_frames": 70000,
+    "train_frames": 59500,
+    "val_frames": 10500,
+    "batches_per_epoch": 14875,
+    "estimated_training_time_hours": 168,
+    "estimated_training_time_days": 7,
+    "hardware_requirement": "GPU with 24GB+ VRAM (RTX 3090, RTX 4090, A100)"
+  },
+
+  "validation": {
+    "check_raw_videos_exist": true,
+    "minimum_videos_required": 500,
+    "check_preprocessed_frames": true,
+    "minimum_frames_required": 50000,
+    "check_masks_exist": true,
+    "check_policy_maps_exist": true,
+    "expected_frame_resolution": [1280, 720],
+    "expected_mask_resolution": [1280, 720],
+    "expected_policy_resolution": [1280, 720]
+  },
+
+  "checkpoint": {
+    "save_frequency": 1,
+    "checkpoint_dir": "output/checkpoints/",
+    "state_file": "training_state.json",
+    "metrics_file": "training_metrics.json",
+    "save_interval_batches": 3600
+  }
+}

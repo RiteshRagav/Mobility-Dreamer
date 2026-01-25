@@ -1,18 +1,28 @@
-# MobilityDreamer 🌆🚴♂️🌳
+# MobilityDreamer: Policy-Conditioned Temporal GAN for Urban Mobility Visualization
 
-**Production-Ready Framework for Visualizing Sustainable Urban Mobility Futures Using ControlNet and Computer Vision**
+Research-grade generative model for visualizing sustainable urban mobility futures.
 
-[![UN SDG 11](https://img.shields.io/badge/UN_SDG-11_Sustainable_Cities-brightgreen)](https://sdgs.un.org/goals/goal11)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+## Quick Start
 
-Supporting **UN Sustainable Development Goal 11: Sustainable Cities and Communities**
+### 1. Download BDD100K Dataset
+```bash
+# Download from https://bair.berkeley.edu/blog/2018/05/30/bdd/
+# Extract to: MobilityDreamer/bdd100k_videos_train_00/
+```
 
----
+See [DATASET_SETUP.md](DATASET_SETUP.md) for detailed instructions.
 
-## 🎯 Project Overview
+### 2. Run Training (One-Click)
+**Windows:**
+```bash
+train.bat
+```
 
-MobilityDreamer translates high-level urban policy interventions into **photorealistic video visualizations** of future city scenarios. Using state-of-the-art ControlNet + Stable Diffusion, policymakers, urban planners, and citizens can see the real-world impact of proposed infrastructure changes (bike lanes, pedestrian zones, EV charging hubs, green spaces) **before implementation**.
+The script will:
+- Create virtual environment
+- Install all dependencies
+- Validate dataset
+- Start 100-epoch training automatically
 
 ### Production Pipeline (7 Stages)
 

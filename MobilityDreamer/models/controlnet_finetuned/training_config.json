@@ -1,0 +1,11 @@
+{
+  "model_id": "lllyasviel/sd-controlnet-canny",
+  "num_images": 4,
+  "epochs": 1,
+  "batch_size": 4,
+  "learning_rate": 1e-05,
+  "timestamp": "2026-01-23T15:01:27.109300",
+  "device": "cpu",
+  "total_parameters": 361279120,
+  "trainable_parameters": 361279120
+}
