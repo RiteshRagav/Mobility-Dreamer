@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="540" viewBox="0 0 980 540">
+  <style>
+    .title { font:700 22px Arial,sans-serif; fill:#0f172a; }
+    .axis { stroke:#334155; stroke-width:2; }
+    .label { font:14px Arial,sans-serif; fill:#111827; }
+    .value { font:13px Arial,sans-serif; fill:#0f172a; }
+  </style>
+  <text x="30" y="40" class="title">Artifact Count Graph (Recovered Progress Snapshot)</text>
+  <line x1="90" y1="460" x2="930" y2="460" class="axis"/>
+  <line x1="90" y1="90" x2="90" y2="460" class="axis"/>
+
+  <rect x="130" y="120" width="100" height="340" fill="#2563eb"/>
+  <text x="145" y="112" class="value">22</text>
+  <text x="118" y="485" class="label">Baseline</text>
+
+  <rect x="280" y="151" width="100" height="309" fill="#0ea5e9"/>
+  <text x="295" y="143" class="value">20</text>
+  <text x="286" y="485" class="label">ControlNet</text>
+
+  <rect x="430" y="120" width="100" height="340" fill="#6366f1"/>
+  <text x="445" y="112" class="value">22</text>
+  <text x="430" y="485" class="label">CtrlNet Fixed</text>
+
+  <rect x="580" y="120" width="100" height="340" fill="#059669"/>
+  <text x="595" y="112" class="value">22</text>
+  <text x="600" y="485" class="label">Depth Maps</text>
+
+  <rect x="730" y="120" width="100" height="340" fill="#f59e0b"/>
+  <text x="745" y="112" class="value">22</text>
+  <text x="730" y="485" class="label">Refined Masks</text>
+
+  <text x="90" y="515" class="label">Counts sourced from: project_progress/results_snapshot/*</text>
+</svg>

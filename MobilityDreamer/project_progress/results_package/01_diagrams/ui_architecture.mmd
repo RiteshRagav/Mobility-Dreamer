@@ -1,0 +1,56 @@
+flowchart TB
+  classDef group fill:#f7f7f7,stroke:#999,stroke-width:1px,rx:6,ry:6;
+  classDef box fill:#ffffff,stroke:#555,stroke-width:1px,rx:4,ry:4;
+
+  subgraph UI[User Interface]
+    direction TB
+    class UI group
+
+    subgraph U1[Landing & Access]
+      direction TB
+      class U1 group
+      L1[Sign in / Project select]:::box
+      L2[Recent projects]:::box
+    end
+
+    subgraph U2[Video Workspace]
+      direction TB
+      class U2 group
+      V1[Video upload]:::box
+      V2[Frame timeline]:::box
+      V3[Preview player]:::box
+    end
+
+    subgraph U3[Policy Editor]
+      direction TB
+      class U3 group
+      P1[Canvas + brush tools]:::box
+      P2[Layer manager]:::box
+      P3[Template library]:::box
+      P4[Mask refinement]:::box
+    end
+
+    subgraph U4[Generation Control]
+      direction TB
+      class U4 group
+      G1[Model settings]:::box
+      G2[Prompt builder]:::box
+      G3[Queue & progress]:::box
+    end
+
+    subgraph U5[Review & Export]
+      direction TB
+      class U5 group
+      R1[Before/after compare]:::box
+      R2[Quality metrics]:::box
+      R3[Export options]:::box
+    end
+  end
+
+  L1 --> V1
+  V1 --> V2 --> V3
+  V3 --> P1 --> P2
+  P3 --> P1
+  P4 --> P1
+  P2 --> G1 --> G2 --> G3
+  G3 --> R1 --> R2 --> R3

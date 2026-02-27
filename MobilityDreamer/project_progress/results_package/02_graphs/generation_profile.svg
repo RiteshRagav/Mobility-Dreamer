@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="420" viewBox="0 0 980 420">
+  <style>
+    .title { font:700 22px Arial,sans-serif; fill:#0f172a; }
+    .box { fill:#f8fafc; stroke:#1e293b; stroke-width:2; rx:10; ry:10; }
+    .txt { font:15px Arial,sans-serif; fill:#111827; }
+    .sub { font:14px Arial,sans-serif; fill:#374151; }
+  </style>
+  <text x="30" y="40" class="title">Generation Configuration Profile (Metadata View)</text>
+
+  <rect x="40" y="80" width="280" height="120" class="box"/>
+  <text x="60" y="115" class="txt">Strength</text>
+  <text x="60" y="140" class="sub">0.6 (across recovered metadata)</text>
+
+  <rect x="350" y="80" width="280" height="120" class="box"/>
+  <text x="370" y="115" class="txt">Inference Steps</text>
+  <text x="370" y="140" class="sub">12</text>
+
+  <rect x="660" y="80" width="280" height="120" class="box"/>
+  <text x="680" y="115" class="txt">Execution Device</text>
+  <text x="680" y="140" class="sub">cpu</text>
+
+  <rect x="40" y="230" width="900" height="140" class="box"/>
+  <text x="60" y="265" class="txt">Frame Coverage Summary</text>
+  <text x="60" y="290" class="sub">Baseline: 20 listed in metadata (22 files available)</text>
+  <text x="60" y="315" class="sub">ControlNet: 20 listed in metadata</text>
+  <text x="60" y="340" class="sub">ControlNet Fixed: 22 listed in metadata</text>
+
+</svg>

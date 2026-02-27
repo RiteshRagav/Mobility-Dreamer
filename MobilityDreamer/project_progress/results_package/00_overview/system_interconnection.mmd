@@ -1,0 +1,11 @@
+flowchart LR
+    A[Pipeline Design\nArchitecture + UI Diagrams] --> B[Generation Outputs\nBaseline / ControlNet / Fixed]
+    B --> C[Depth and Mask Evidence]
+    C --> D[Integrated Interpretation\nTables + Notes]
+    D --> E[IEEE-aligned Progress Docs]
+
+    A -. explained by .-> A1[01_diagrams]
+    B -. quantified in .-> B1[02_graphs]
+    C -. validated in .-> C1[04_evidence]
+    D -. structured in .-> D1[03_tables]
+    E -. archived in .-> E1[05_supporting_docs]
