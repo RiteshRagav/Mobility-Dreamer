@@ -16,7 +16,7 @@ cfg                                             = __C
 #
 cfg.DATASETS                                     = EasyDict()
 cfg.DATASETS.BDD100K                             = EasyDict()
-cfg.DATASETS.BDD100K.VIDEO_DIR                   = "./bdd100k_videos_train_00/bdd100k/videos/train"
+cfg.DATASETS.BDD100K.VIDEO_DIR                   = "./Dataset/bdd100k_videos_train_00/bdd100k_videos_train_00"
 cfg.DATASETS.BDD100K.FRAMES_DIR                  = "./data/frames"
 cfg.DATASETS.BDD100K.MASKS_DIR                   = "./data/masks"
 cfg.DATASETS.BDD100K.POLICY_DIR                  = "./data/policy_maps"
@@ -45,9 +45,9 @@ cfg.DATASETS.BDD100K.POLICY_TYPES                = {
 #
 cfg.CONST                                        = EasyDict()
 cfg.CONST.EXP_NAME                               = "mobilitydreamer_baseline"
-cfg.CONST.N_WORKERS                              = 4
+cfg.CONST.N_WORKERS                              = 0
 cfg.CONST.DATASET                                = "BDD100K"
-cfg.CONST.DEVICE                                 = "cuda"       # or "cpu"
+cfg.CONST.DEVICE                                 = "cuda"       # Try to force cuda if possible
 cfg.CONST.SEED                                   = 42
 
 #
@@ -63,10 +63,10 @@ cfg.DIR.VISUALIZATIONS                           = "./output/visualizations"
 # WandB / Experiment Tracking
 #
 cfg.WANDB                                        = EasyDict()
-cfg.WANDB.ENABLED                                = True
+cfg.WANDB.ENABLED                                = False
 cfg.WANDB.PROJECT                                = "MobilityDreamer"
 cfg.WANDB.ENTITY                                 = "your-wandb-username"  # UPDATE THIS
-cfg.WANDB.MODE                                   = "online"    # "online", "offline", "disabled"
+cfg.WANDB.MODE                                   = "disabled"    # "online", "offline", "disabled"
 cfg.WANDB.RUN_ID                                 = None
 cfg.WANDB.LOG_CODE                               = True
 cfg.WANDB.SYNC_TENSORBOARD                       = True
@@ -121,12 +121,12 @@ cfg.NETWORK.MOBILITY_GAN.DISCRIMINATOR.TEMPORAL  = True        # Enable temporal
 #
 cfg.TRAIN                                        = EasyDict()
 cfg.TRAIN.N_EPOCHS                               = 100
-cfg.TRAIN.BATCH_SIZE                             = 4           # Per GPU
-cfg.TRAIN.GRADIENT_ACCUMULATION_STEPS            = 4           # Effective batch size: 4*4=16
-cfg.TRAIN.CKPT_SAVE_FREQ                         = 5           # Save every N epochs
-cfg.TRAIN.VAL_FREQ                               = 1           # Validate every N epochs
-cfg.TRAIN.VIS_FREQ                               = 500         # Visualize every N iterations
-cfg.TRAIN.LOG_FREQ                               = 50          # Log every N iterations
+cfg.TRAIN.BATCH_SIZE                             = 1           # Reduced to save RAM
+cfg.TRAIN.GRADIENT_ACCUMULATION_STEPS            = 16          # Compensate for smaller batch size
+cfg.TRAIN.CKPT_SAVE_FREQ                         = 1           # Save every epoch for safety
+cfg.TRAIN.VAL_FREQ                               = 1           # Validate every epoch
+cfg.TRAIN.VIS_FREQ                               = 5           # Visualize every 5 iterations (reduce disk/CPU load)
+cfg.TRAIN.LOG_FREQ                               = 5           # Log every 5 iterations
 
 # Optimizer
 cfg.TRAIN.OPTIMIZER                              = EasyDict()
@@ -171,7 +171,7 @@ cfg.TRAIN.EMA.UPDATE_FREQ                        = 10          # Update EMA ever
 
 # Mixed Precision Training
 cfg.TRAIN.AMP                                    = EasyDict()
-cfg.TRAIN.AMP.ENABLED                            = True        # Use automatic mixed precision
+cfg.TRAIN.AMP.ENABLED                            = False        # Disabled for cross-platform stability
 cfg.TRAIN.AMP.OPT_LEVEL                          = "O1"
 
 # Data Augmentation

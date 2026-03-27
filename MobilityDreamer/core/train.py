@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-Training loop scaffold for MobilityDreamer.
-This is a minimal, end-to-end runnable skeleton intended for rapid bring-up.
-"""
+import sys
+print("DEBUG: Script started")
+sys.stdout.flush()
 import os
+import time
 import logging
 from pathlib import Path
 
@@ -49,18 +48,48 @@ def build_dataloaders():
     return train_loader, val_loader
 
 
-def train_one_epoch(generator, discriminator, opt_g, opt_d, loader, device):
+from torchvision.utils import save_image
+from tqdm import tqdm
+
+
+def save_visualization(frames, fake, seg, epoch, iter_idx):
+    vis_dir = Path(cfg.DIR.VISUALIZATIONS)
+    vis_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Save a comparison: [Real, Fake, Segmentation]
+    # Pick first item in batch
+    real_img = (frames[0, 0] + 1.0) / 2.0  # (3, H, W) in [0, 1]
+    fake_img = (fake[0, 0] + 1.0) / 2.0
+    
+    # Simple color map for segmentation (first 3 channels for visual)
+    # seg is (T, C, H, W)
+    seg_img = seg[0, 0, :3] # Take 3 classes/channels
+    
+    combined = torch.cat([real_img.cpu(), fake_img.detach().cpu()], dim=2)
+    save_path = vis_dir / f"epoch_{epoch}_iter_{iter_idx}.png"
+    save_image(combined, save_path)
+    return save_path
+
+
+def train_one_epoch(generator, discriminator, opt_g, opt_d, loader, device, epoch):
     generator.train()
     discriminator.train()
     total_g = total_d = 0.0
-    for batch in loader:
+    
+    pbar = tqdm(loader, desc=f"Epoch {epoch}")
+    for i, batch in enumerate(pbar):
+        # Hardware throttling: prevent laptop overheating
+        time.sleep(0.5)
         frames = batch["frames"].to(device)
         seg = batch["segmentation"].to(device) if "segmentation" in batch else None
         pol = batch["policy"].to(device) if "policy" in batch else None
+        
         if seg is None or pol is None:
-            continue  # require conditioning
+            continue
+
         # Generator forward
         fake = generator(frames, seg, pol)
+        
         # Discriminator real/fake
         real_logits = discriminator(frames, seg, pol)["spatial"]
         fake_logits = discriminator(fake.detach(), seg, pol)["spatial"]
@@ -95,6 +124,13 @@ def train_one_epoch(generator, discriminator, opt_g, opt_d, loader, device):
 
         total_d += loss_d.item()
         total_g += total_loss_g.item()
+        
+        pbar.set_postfix(G=total_loss_g.item(), D=loss_d.item())
+        
+        # Visualize periodically
+        if (i + 1) % cfg.TRAIN.VIS_FREQ == 0:
+            save_visualization(frames, fake, seg, epoch, i)
+
     n = max(1, len(loader))
     return total_g / n, total_d / n
 
@@ -116,11 +152,19 @@ def validate(generator, discriminator, loader, device):
     return total_rec / n
 
 
+from training_tracker import TrainingStateTracker
+
+
 def main():
+    # Force low CPU usage (limit to 2 threads)
+    torch.set_num_threads(2)
     device = torch.device(cfg.CONST.DEVICE if torch.cuda.is_available() else "cpu")
     logger.info(f"Using device: {device}")
 
     train_loader, val_loader = build_dataloaders()
+    
+    tracker = TrainingStateTracker()
+    tracker.start_training()
 
     generator = MobilityGenerator(cfg).to(device)
     discriminator = MobilityDiscriminator(cfg).to(device)
@@ -128,10 +172,29 @@ def main():
     opt_g = torch.optim.Adam(generator.parameters(), lr=cfg.TRAIN.OPTIMIZER.LR_G, betas=cfg.TRAIN.OPTIMIZER.BETAS)
     opt_d = torch.optim.Adam(discriminator.parameters(), lr=cfg.TRAIN.OPTIMIZER.LR_D, betas=cfg.TRAIN.OPTIMIZER.BETAS)
 
-    for epoch in range(1, 1 + cfg.TRAIN.N_EPOCHS):
-        loss_g, loss_d = train_one_epoch(generator, discriminator, opt_g, opt_d, train_loader, device)
+    start_epoch = 1
+    ckpt_dir = Path(cfg.DIR.CHECKPOINTS)
+    if ckpt_dir.exists():
+        ckpts = list(ckpt_dir.glob("epoch_*.pt"))
+        if ckpts:
+            # Find the latest checkpoint by epoch number
+            latest_ckpt = max(ckpts, key=lambda x: int(x.stem.split('_')[1]))
+            logger.info(f"Loading checkpoint: {latest_ckpt}")
+            checkpoint = torch.load(latest_ckpt, map_location=device)
+            generator.load_state_dict(checkpoint["generator"])
+            discriminator.load_state_dict(checkpoint["discriminator"])
+            opt_g.load_state_dict(checkpoint["opt_g"])
+            opt_d.load_state_dict(checkpoint["opt_d"])
+            start_epoch = checkpoint["epoch"] + 1
+            logger.info(f"Resuming from epoch {start_epoch}")
+
+    for epoch in range(start_epoch, 1 + cfg.TRAIN.N_EPOCHS):
+        loss_g, loss_d = train_one_epoch(generator, discriminator, opt_g, opt_d, train_loader, device, epoch)
         val_rec = validate(generator, discriminator, val_loader, device)
-        logger.info(f"Epoch {epoch}: G={loss_g:.4f} D={loss_d:.4f} ValRec={val_rec:.4f}")
+        
+        # Log to paper and console via tracker
+        tracker.update_epoch(epoch, float(loss_g), float(loss_d), float(val_rec))
+        logger.info(f"Epoch {epoch} Sync Complete: G={loss_g:.4f} D={loss_d:.4f} ValRec={val_rec:.4f}")
 
         if epoch % cfg.TRAIN.CKPT_SAVE_FREQ == 0:
             ckpt_dir = Path(cfg.DIR.CHECKPOINTS)

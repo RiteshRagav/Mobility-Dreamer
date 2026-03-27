@@ -97,12 +97,30 @@ class Compose:
         return data
 
 
+class CropTransform:
+    def __init__(self, crop_size):
+        self.crop_size = crop_size
+    def __call__(self, data):
+        return random_crop(data, self.crop_size)
+
+class FlipTransform:
+    def __init__(self, p):
+        self.p = p
+    def __call__(self, data):
+        return horizontal_flip(data, self.p)
+
+class JitterTransform:
+    def __init__(self, p):
+        self.p = p
+    def __call__(self, data):
+        return color_jitter(data, self.p)
+
 def build_default_transforms(cfg=None):
     crop_size = (384, 512)
     t_list = [
-        lambda d: random_crop(d, crop_size),
-        lambda d: horizontal_flip(d, p=0.5),
-        lambda d: color_jitter(d, p=0.3),
+        CropTransform(crop_size),
+        FlipTransform(0.5),
+        JitterTransform(0.3),
         normalize,
     ]
     return Compose(t_list)
