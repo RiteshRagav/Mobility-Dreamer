@@ -1,0 +1,22 @@
+flowchart TB
+    A[Input video]
+    B[Frame extraction]
+    C[Semantic segmentation]
+    D[Policy map editor]
+    E[Depth estimation]
+    F[ControlNet generation]
+    G[Temporal consistency]
+    H[Video composition]
+    I[Scenario output video]
+
+    A --> B --> C --> D --> E --> F --> G --> H --> I
+
+    J[Template library]
+    K[Mask refinement]
+    L[Stable Diffusion and ControlNet]
+    M[Optical flow and temporal loss]
+
+    D -. Optional .-> J
+    C -. Optional .-> K
+    F -. Uses .-> L
+    G -. Computes .-> M

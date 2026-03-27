@@ -1,0 +1,9 @@
+artifact_group,file_count,primary_location,linked_explainer
+baseline_generated_frames,22,../results_snapshot/generated_frames,../02_graphs/artifact_counts.svg
+controlnet_generated_frames,20,../results_snapshot/generated_frames_controlnet,../02_graphs/artifact_counts.svg
+controlnet_fixed_generated_frames,22,../results_snapshot/generated_frames_controlnet_fixed,../02_graphs/artifact_counts.svg
+depth_maps,22,../results_snapshot/depth_maps,../04_evidence/evidence_crosswalk.md
+refined_masks,22,../results_snapshot/masks_refined,../04_evidence/evidence_crosswalk.md
+architecture_diagram,1,../01_diagrams/architecture.png,../01_diagrams/diagram_explanations.md
+ui_architecture_diagram,1,../01_diagrams/ui_architecture.png,../01_diagrams/diagram_explanations.md
+progress_tracking_doc,1,../05_supporting_docs/IEEE_PAPER_DATA_PROGRESS.md,../00_overview/RESULTS_OVERVIEW.md
